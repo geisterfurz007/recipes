@@ -211,10 +211,10 @@ export interface Food {
     recipe?: FoodRecipe | null;
     /**
      * 
-     * @type {boolean}
+     * @type {string}
      * @memberof Food
      */
-    food_onhand?: boolean;
+    food_onhand?: string | null;
     /**
      * 
      * @type {FoodSupermarketCategory}
@@ -607,10 +607,10 @@ export interface IngredientFood {
     recipe?: FoodRecipe | null;
     /**
      * 
-     * @type {boolean}
+     * @type {string}
      * @memberof IngredientFood
      */
-    food_onhand?: boolean;
+    food_onhand?: string | null;
     /**
      * 
      * @type {FoodSupermarketCategory}
@@ -1182,7 +1182,7 @@ export interface MealPlanRecipe {
      * @type {any}
      * @memberof MealPlanRecipe
      */
-    image?: any;
+    image?: any | null;
     /**
      * 
      * @type {Array<MealPlanRecipeKeywords>}
@@ -1255,6 +1255,12 @@ export interface MealPlanRecipe {
      * @memberof MealPlanRecipe
      */
     _new?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MealPlanRecipe
+     */
+    recent?: string;
 }
 /**
  * 
@@ -1372,7 +1378,7 @@ export interface Recipe {
      * @type {any}
      * @memberof Recipe
      */
-    image?: any;
+    image?: any | null;
     /**
      * 
      * @type {Array<RecipeKeywords>}
@@ -1715,25 +1721,25 @@ export interface RecipeNutrition {
      * @type {string}
      * @memberof RecipeNutrition
      */
-    carbohydrates?: string;
+    carbohydrates: string;
     /**
      * 
      * @type {string}
      * @memberof RecipeNutrition
      */
-    fats?: string;
+    fats: string;
     /**
      * 
      * @type {string}
      * @memberof RecipeNutrition
      */
-    proteins?: string;
+    proteins: string;
     /**
      * 
      * @type {string}
      * @memberof RecipeNutrition
      */
-    calories?: string;
+    calories: string;
     /**
      * 
      * @type {string}
@@ -1770,7 +1776,7 @@ export interface RecipeOverview {
      * @type {any}
      * @memberof RecipeOverview
      */
-    image?: any;
+    image?: any | null;
     /**
      * 
      * @type {Array<MealPlanRecipeKeywords>}
@@ -1843,6 +1849,12 @@ export interface RecipeOverview {
      * @memberof RecipeOverview
      */
     _new?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RecipeOverview
+     */
+    recent?: string;
 }
 /**
  * 
@@ -1923,12 +1935,6 @@ export interface RecipeSteps {
      * @type {string}
      * @memberof RecipeSteps
      */
-    type?: RecipeStepsTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof RecipeSteps
-     */
     instruction?: string;
     /**
      * 
@@ -1991,18 +1997,6 @@ export interface RecipeSteps {
      */
     numrecipe?: string;
 }
-
-/**
-    * @export
-    * @enum {string}
-    */
-export enum RecipeStepsTypeEnum {
-    Text = 'TEXT',
-    Time = 'TIME',
-    File = 'FILE',
-    Recipe = 'RECIPE'
-}
-
 /**
  * 
  * @export
@@ -2528,12 +2522,6 @@ export interface Step {
      * @type {string}
      * @memberof Step
      */
-    type?: StepTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Step
-     */
     instruction?: string;
     /**
      * 
@@ -2596,18 +2584,6 @@ export interface Step {
      */
     numrecipe?: string;
 }
-
-/**
-    * @export
-    * @enum {string}
-    */
-export enum StepTypeEnum {
-    Text = 'TEXT',
-    Time = 'TIME',
-    File = 'FILE',
-    Recipe = 'RECIPE'
-}
-
 /**
  * 
  * @export
@@ -3026,10 +3002,10 @@ export interface UserPreference {
     mealplan_autoexclude_onhand?: boolean;
     /**
      * 
-     * @type {Array<number>}
+     * @type {Array<MealPlanShared>}
      * @memberof UserPreference
      */
-    shopping_share?: Array<number>;
+    shopping_share?: Array<MealPlanShared> | null;
     /**
      * 
      * @type {number}
@@ -3054,6 +3030,12 @@ export interface UserPreference {
      * @memberof UserPreference
      */
     filter_to_supermarket?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UserPreference
+     */
+    shopping_add_onhand?: boolean;
 }
 
 /**
@@ -5273,12 +5255,15 @@ export const ApiApiAxiosParamCreator = function (configuration?: Configuration) 
         /**
          * 
          * @param {string} [query] Query string matched (fuzzy) against recipe name. In the future also fulltext search.
-         * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter.
+         * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter. Equivalent to keywords_or
+         * @param {number} [keywordsOr] Keyword IDs, repeat for multiple Return recipes with any of the keywords
+         * @param {number} [keywordsAnd] Keyword IDs, repeat for multiple Return recipes with all of the keywords.
+         * @param {number} [keywordsOrNot] Keyword IDs, repeat for multiple Exclude recipes with any of the keywords.
+         * @param {number} [keywordsAndNot] Keyword IDs, repeat for multiple Exclude recipes with all of the keywords.
          * @param {number} [foods] ID of food a recipe should have. For multiple repeat parameter.
          * @param {number} [units] ID of unit a recipe should have.
          * @param {number} [rating] Rating a recipe should have. [0 - 5]
          * @param {string} [books] ID of book a recipe should be in. For multiple repeat parameter.
-         * @param {string} [keywordsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided keywords.
          * @param {string} [foodsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided foods.
          * @param {string} [booksOr] If recipe should be in all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided books.
          * @param {string} [internal] If only internal recipes should be returned. [true/&lt;b&gt;false&lt;/b&gt;]
@@ -5289,7 +5274,7 @@ export const ApiApiAxiosParamCreator = function (configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listRecipes: async (query?: string, keywords?: number, foods?: number, units?: number, rating?: number, books?: string, keywordsOr?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options: any = {}): Promise<RequestArgs> => {
+        listRecipes: async (query?: string, keywords?: number, keywordsOr?: number, keywordsAnd?: number, keywordsOrNot?: number, keywordsAndNot?: number, foods?: number, units?: number, rating?: number, books?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/recipe/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5310,6 +5295,22 @@ export const ApiApiAxiosParamCreator = function (configuration?: Configuration) 
                 localVarQueryParameter['keywords'] = keywords;
             }
 
+            if (keywordsOr !== undefined) {
+                localVarQueryParameter['keywords_or'] = keywordsOr;
+            }
+
+            if (keywordsAnd !== undefined) {
+                localVarQueryParameter['keywords_and'] = keywordsAnd;
+            }
+
+            if (keywordsOrNot !== undefined) {
+                localVarQueryParameter['keywords_or_not'] = keywordsOrNot;
+            }
+
+            if (keywordsAndNot !== undefined) {
+                localVarQueryParameter['keywords_and_not'] = keywordsAndNot;
+            }
+
             if (foods !== undefined) {
                 localVarQueryParameter['foods'] = foods;
             }
@@ -5324,10 +5325,6 @@ export const ApiApiAxiosParamCreator = function (configuration?: Configuration) 
 
             if (books !== undefined) {
                 localVarQueryParameter['books'] = books;
-            }
-
-            if (keywordsOr !== undefined) {
-                localVarQueryParameter['keywords_or'] = keywordsOr;
             }
 
             if (foodsOr !== undefined) {
@@ -9663,12 +9660,15 @@ export const ApiApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} [query] Query string matched (fuzzy) against recipe name. In the future also fulltext search.
-         * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter.
+         * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter. Equivalent to keywords_or
+         * @param {number} [keywordsOr] Keyword IDs, repeat for multiple Return recipes with any of the keywords
+         * @param {number} [keywordsAnd] Keyword IDs, repeat for multiple Return recipes with all of the keywords.
+         * @param {number} [keywordsOrNot] Keyword IDs, repeat for multiple Exclude recipes with any of the keywords.
+         * @param {number} [keywordsAndNot] Keyword IDs, repeat for multiple Exclude recipes with all of the keywords.
          * @param {number} [foods] ID of food a recipe should have. For multiple repeat parameter.
          * @param {number} [units] ID of unit a recipe should have.
          * @param {number} [rating] Rating a recipe should have. [0 - 5]
          * @param {string} [books] ID of book a recipe should be in. For multiple repeat parameter.
-         * @param {string} [keywordsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided keywords.
          * @param {string} [foodsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided foods.
          * @param {string} [booksOr] If recipe should be in all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided books.
          * @param {string} [internal] If only internal recipes should be returned. [true/&lt;b&gt;false&lt;/b&gt;]
@@ -9679,8 +9679,8 @@ export const ApiApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listRecipes(query?: string, keywords?: number, foods?: number, units?: number, rating?: number, books?: string, keywordsOr?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InlineResponse2004>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listRecipes(query, keywords, foods, units, rating, books, keywordsOr, foodsOr, booksOr, internal, random, _new, page, pageSize, options);
+        async listRecipes(query?: string, keywords?: number, keywordsOr?: number, keywordsAnd?: number, keywordsOrNot?: number, keywordsAndNot?: number, foods?: number, units?: number, rating?: number, books?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InlineResponse2004>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listRecipes(query, keywords, keywordsOr, keywordsAnd, keywordsOrNot, keywordsAndNot, foods, units, rating, books, foodsOr, booksOr, internal, random, _new, page, pageSize, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -11348,12 +11348,15 @@ export const ApiApiFactory = function (configuration?: Configuration, basePath?:
         /**
          * 
          * @param {string} [query] Query string matched (fuzzy) against recipe name. In the future also fulltext search.
-         * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter.
+         * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter. Equivalent to keywords_or
+         * @param {number} [keywordsOr] Keyword IDs, repeat for multiple Return recipes with any of the keywords
+         * @param {number} [keywordsAnd] Keyword IDs, repeat for multiple Return recipes with all of the keywords.
+         * @param {number} [keywordsOrNot] Keyword IDs, repeat for multiple Exclude recipes with any of the keywords.
+         * @param {number} [keywordsAndNot] Keyword IDs, repeat for multiple Exclude recipes with all of the keywords.
          * @param {number} [foods] ID of food a recipe should have. For multiple repeat parameter.
          * @param {number} [units] ID of unit a recipe should have.
          * @param {number} [rating] Rating a recipe should have. [0 - 5]
          * @param {string} [books] ID of book a recipe should be in. For multiple repeat parameter.
-         * @param {string} [keywordsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided keywords.
          * @param {string} [foodsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided foods.
          * @param {string} [booksOr] If recipe should be in all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided books.
          * @param {string} [internal] If only internal recipes should be returned. [true/&lt;b&gt;false&lt;/b&gt;]
@@ -11364,8 +11367,8 @@ export const ApiApiFactory = function (configuration?: Configuration, basePath?:
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listRecipes(query?: string, keywords?: number, foods?: number, units?: number, rating?: number, books?: string, keywordsOr?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<InlineResponse2004> {
-            return localVarFp.listRecipes(query, keywords, foods, units, rating, books, keywordsOr, foodsOr, booksOr, internal, random, _new, page, pageSize, options).then((request) => request(axios, basePath));
+        listRecipes(query?: string, keywords?: number, keywordsOr?: number, keywordsAnd?: number, keywordsOrNot?: number, keywordsAndNot?: number, foods?: number, units?: number, rating?: number, books?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options?: any): AxiosPromise<InlineResponse2004> {
+            return localVarFp.listRecipes(query, keywords, keywordsOr, keywordsAnd, keywordsOrNot, keywordsAndNot, foods, units, rating, books, foodsOr, booksOr, internal, random, _new, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -13057,12 +13060,15 @@ export class ApiApi extends BaseAPI {
     /**
      * 
      * @param {string} [query] Query string matched (fuzzy) against recipe name. In the future also fulltext search.
-     * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter.
+     * @param {number} [keywords] ID of keyword a recipe should have. For multiple repeat parameter. Equivalent to keywords_or
+     * @param {number} [keywordsOr] Keyword IDs, repeat for multiple Return recipes with any of the keywords
+     * @param {number} [keywordsAnd] Keyword IDs, repeat for multiple Return recipes with all of the keywords.
+     * @param {number} [keywordsOrNot] Keyword IDs, repeat for multiple Exclude recipes with any of the keywords.
+     * @param {number} [keywordsAndNot] Keyword IDs, repeat for multiple Exclude recipes with all of the keywords.
      * @param {number} [foods] ID of food a recipe should have. For multiple repeat parameter.
      * @param {number} [units] ID of unit a recipe should have.
      * @param {number} [rating] Rating a recipe should have. [0 - 5]
      * @param {string} [books] ID of book a recipe should be in. For multiple repeat parameter.
-     * @param {string} [keywordsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided keywords.
      * @param {string} [foodsOr] If recipe should have all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided foods.
      * @param {string} [booksOr] If recipe should be in all (AND&#x3D;false) or any (OR&#x3D;&lt;b&gt;true&lt;/b&gt;) of the provided books.
      * @param {string} [internal] If only internal recipes should be returned. [true/&lt;b&gt;false&lt;/b&gt;]
@@ -13074,8 +13080,8 @@ export class ApiApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ApiApi
      */
-    public listRecipes(query?: string, keywords?: number, foods?: number, units?: number, rating?: number, books?: string, keywordsOr?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options?: any) {
-        return ApiApiFp(this.configuration).listRecipes(query, keywords, foods, units, rating, books, keywordsOr, foodsOr, booksOr, internal, random, _new, page, pageSize, options).then((request) => request(this.axios, this.basePath));
+    public listRecipes(query?: string, keywords?: number, keywordsOr?: number, keywordsAnd?: number, keywordsOrNot?: number, keywordsAndNot?: number, foods?: number, units?: number, rating?: number, books?: string, foodsOr?: string, booksOr?: string, internal?: string, random?: string, _new?: string, page?: number, pageSize?: number, options?: any) {
+        return ApiApiFp(this.configuration).listRecipes(query, keywords, keywordsOr, keywordsAnd, keywordsOrNot, keywordsAndNot, foods, units, rating, books, foodsOr, booksOr, internal, random, _new, page, pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
