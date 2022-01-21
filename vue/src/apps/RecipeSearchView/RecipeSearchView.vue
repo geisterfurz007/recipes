@@ -16,7 +16,7 @@
                                         <b-button variant="light" v-b-tooltip.hover :title="$t('Random Recipes')" @click="openRandom()">
                                             <i class="fas fa-dice-five" style="font-size: 1.5em"></i>
                                         </b-button>
-                                        <b-button v-b-toggle.collapse_advanced_search v-b-tooltip.hover :title="$t('Advanced Settings')" v-bind:variant="!searchFiltered(true) ? 'primary' : 'danger'">
+                                        <b-button v-b-toggle.collapse_advanced_search v-b-tooltip.hover :title="$t('Advanced Settings')" v-bind:variant="searchFiltered(true) ? 'danger' : 'primary'">
                                             <!-- TODO consider changing this icon to a filter -->
                                             <i class="fas fa-caret-down" v-if="!search.advanced_search_visible"></i>
                                             <i class="fas fa-caret-up" v-if="search.advanced_search_visible"></i>
@@ -334,9 +334,6 @@
                                                     @input="refreshData(false)"
                                                     style="flex-grow: 1; flex-shrink: 1; flex-basis: 0"
                                                 />
-                                                <!-- <b-input-group-append>
-                                                    <b-input-group-text style="width: 85px"> </b-input-group-text>
-                                                </b-input-group-append> -->
                                                 <b-input-group-append>
                                                     <b-input-group-text>
                                                         <b-form-checkbox v-model="search.search_rating_gte" name="check-button" @change="refreshData(false)" class="shadow-none" switch style="width: 4em">
@@ -372,6 +369,13 @@
                                             </b-input-group>
                                         </div>
                                     </div>
+                                    <div v-if="ui.enable_expert && searchFiltered(false)" class="row justify-content-end small">
+                                        <div class="col-auto">
+                                            <b-button class="my-0" variant="link" size="sm" @click="saveSearch">
+                                                <div>{{ $t("save_filter") }}</div>
+                                            </b-button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </b-collapse>
@@ -386,12 +390,11 @@
                         </span>
                     </div>
                 </div>
-                <div v-if="expertMode">i'm an expert!</div>
 
                 <div class="row">
                     <div class="col col-md-12">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); grid-gap: 0.8rem">
-                            <template v-if="!searchFiltered()">
+                            <template v-if="searchFiltered()">
                                 <recipe-card v-bind:key="`mp_${m.id}`" v-for="m in meal_plans" :recipe="m.recipe" :meal_plan="m" :footer_text="m.meal_type_name" footer_icon="far fa-calendar-alt"></recipe-card>
                             </template>
                             <recipe-card v-for="r in recipes" v-bind:key="r.id" :recipe="r" :footer_text="isRecentOrNew(r)[0]" :footer_icon="isRecentOrNew(r)[1]"> </recipe-card>
@@ -649,7 +652,7 @@ export default {
 
                     this.facets = result.data.facets
                     this.recipes = this.removeDuplicates(result.data.results, (recipe) => recipe.id)
-                    if (!this.searchFiltered()) {
+                    if (this.searchFiltered()) {
                         // if meal plans are being shown - filter out any meal plan recipes from the recipe list
                         let mealPlans = []
                         this.meal_plans.forEach((x) => mealPlans.push(x.recipe.id))
@@ -704,7 +707,7 @@ export default {
             this.search.search_foods = this.search.search_foods.map((x) => {
                 return { ...x, items: [] }
             })
-            this.search.search_book = this.search.search_book.map((x) => {
+            this.search.search_books = this.search.search_books.map((x) => {
                 return { ...x, items: [] }
             })
             this.search.search_units = []
@@ -792,24 +795,24 @@ export default {
                 page: this.search.pagination_page,
                 pageSize: this.ui.page_size,
             }
-            if (!this.searchFiltered()) {
+            if (this.searchFiltered()) {
                 params.options = { query: { last_viewed: this.ui.recently_viewed } }
             }
-            console.log(params)
             return params
         },
         searchFiltered: function (ignore_string = false) {
             let filtered =
-                this.search?.search_keywords?.[0]?.items?.length === 0 &&
-                this.search?.search_foods?.[0]?.items?.length === 0 &&
-                this.search?.search_books?.[0]?.items?.length === 0 &&
-                !this.random_search &&
-                this.search?.search_rating === undefined
+                this.search?.search_keywords?.[0]?.items?.length !== 0 ||
+                this.search?.search_foods?.[0]?.items?.length !== 0 ||
+                this.search?.search_books?.[0]?.items?.length !== 0 ||
+                this.search?.search_units?.length !== 0 ||
+                this.random_search ||
+                this.search?.search_rating !== undefined
 
             if (ignore_string) {
-                return !filtered
+                return filtered
             } else {
-                return !filtered && this.search?.search_input !== ""
+                return filtered || this.search?.search_input != ""
             }
         },
         addFields(field) {
@@ -836,6 +839,10 @@ export default {
                     .flat()
                     .map((x) => x?.id ?? x),
             }
+        },
+        saveSearch: function () {
+            let filtername = window.prompt(this.$t("save_filter"), this.$t("filter_name"))
+            console.log("you saved: ", filtername, this.buildParams(false))
         },
     },
 }
