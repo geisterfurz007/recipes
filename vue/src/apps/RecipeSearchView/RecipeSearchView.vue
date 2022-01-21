@@ -397,14 +397,14 @@
                             <template v-if="searchFiltered()">
                                 <recipe-card v-bind:key="`mp_${m.id}`" v-for="m in meal_plans" :recipe="m.recipe" :meal_plan="m" :footer_text="m.meal_type_name" footer_icon="far fa-calendar-alt"></recipe-card>
                             </template>
-                            <recipe-card v-for="r in recipes" v-bind:key="r.id" :recipe="r" :footer_text="isRecentOrNew(r)[0]" :footer_icon="isRecentOrNew(r)[1]"> </recipe-card>
+                            <recipe-card v-for="r in recipes" v-bind:key="r.id" :recipe="r" :footer_text="isRecentOrNew(r)[0]" :footer_icon="isRecentOrNew(r)[1]"></recipe-card>
                         </div>
                     </div>
                 </div>
 
                 <div class="row" style="margin-top: 2vh" v-if="!random_search">
                     <div class="col col-md-12">
-                        <b-pagination pills v-model="search.pagination_page" :total-rows="pagination_count" :per-page="ui.page_size" @change="pageChange" align="center"> </b-pagination>
+                        <b-pagination pills v-model="search.pagination_page" :total-rows="pagination_count" :per-page="ui.page_size" @change="pageChange" align="center"></b-pagination>
                     </div>
                 </div>
             </div>
@@ -587,18 +587,22 @@ export default {
                     this.facets.Keywords.push({ id: x, name: "loading..." })
                 }
             }
+
             this.facets.Foods = []
             for (let x of this.search.search_foods.map((x) => x.items).flat()) {
                 this.facets.Foods.push({ id: x, name: "loading..." })
             }
+
             this.facets.Keywords = []
             for (let x of this.search.search_keywords.map((x) => x.items).flat()) {
                 this.facets.Keywords.push({ id: x, name: "loading..." })
             }
+
             this.facets.Books = []
             for (let x of this.search.search_books.map((x) => x.items).flat()) {
                 this.facets.Books.push({ id: x, name: "loading..." })
             }
+
             this.loadMealPlan()
             this.refreshData(false)
         })

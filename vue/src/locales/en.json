@@ -302,5 +302,7 @@
     "show_filters": "Show Filters",
     "not": "not",
     "save_filter": "Save Filter",
-    "filter_name": "Filter Name"
+    "filter_name": "Filter Name",
+    "left_handed": "Left-handed mode",
+    "left_handed_help": "Will optimize the UI for use with your left hand."
 }
