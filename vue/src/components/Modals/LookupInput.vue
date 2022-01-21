@@ -14,6 +14,7 @@
                 :allow_create="form.allow_create"
                 :create_placeholder="createPlaceholder"
                 :clear="clear"
+                :label="list_label"
                 style="flex-grow: 1; flex-shrink: 1; flex-basis: 0"
                 :placeholder="modelName"
                 @new="addNew"
@@ -53,6 +54,7 @@ export default {
             new_value: undefined,
             field: undefined,
             label: undefined,
+            list_label: undefined,
             sticky_options: undefined,
             first_run: true,
         }
@@ -62,6 +64,7 @@ export default {
         this.field = this.form?.field ?? "You Forgot To Set Field Name"
         this.label = this.form?.label ?? ""
         this.sticky_options = this.form?.sticky_options ?? []
+        this.list_label = this.form?.list_label ?? undefined
     },
     computed: {
         modelName() {
@@ -147,9 +150,9 @@ export default {
         unflattenItem: function (itemList) {
             let unflat_items = []
             let item = undefined
-            let this_label = undefined
             let label = this.form.list_label.split("::")
             let order = 0
+            let this_label
             itemList.forEach((x) => {
                 item = {}
                 item[label[0]] = {}
